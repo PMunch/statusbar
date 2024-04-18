@@ -41,14 +41,16 @@ proc tosgr(x: string, ground: Ground): string =
   result &= $x[2..3].parseHexInt & ";"
   result &= $x[4..5].parseHexInt & "m"
 
-const reset: string  = "\x1b[0m"
+const
+  reset = "\x1b[0m"
+  clicksplit = "\x1f"
 
 proc createStatus() =
   var status = ""
   for content in contents:
     status &= content.background.tosgr(fg) & "\uE0BE" & content.background.tosgr(bg) &
               content.foreground.tosgr(fg) & content.content.replace("\n", "") & reset &
-              content.background.tosgr(fg) & "\uE0B8" & reset
+              content.background.tosgr(fg) & "\uE0B8" & reset & clicksplit
   echo status
   echo XStoreName(display, RootWindow(display, DefaultScreen(display)), status.cstring)
   echo XSync(display, false.XBool)
@@ -202,7 +204,7 @@ proc hello_mkdir(path: cstring, mode: modeT): cint {.exportc, cdecl.} =
   echo path
   let split = ($path).split("/")
   if split.len == 2 and split[0].len == 0 and not blockExists(split[1]):
-    contents.add Block(name: split[1], content: "Hello world", foreground: "000000", background: nord[split[1].hash.uint mod nord.len.uint])
+    contents.add Block(name: split[1], content: "", foreground: "000000", background: nord[split[1].hash.uint mod nord.len.uint])
     contents = contents.sortedByIt it.name
     createStatus()
   else:
