@@ -202,7 +202,7 @@ proc hello_mkdir(path: cstring, mode: modeT): cint {.exportc, cdecl.} =
   echo path
   let split = ($path).split("/")
   if split.len == 2 and split[0].len == 0 and not blockExists(split[1]):
-    contents.add Block(name: split[1], content: "Hello world", foreground: "000000", background: nord[contents.hash.uint mod nord.len.uint])
+    contents.add Block(name: split[1], content: "Hello world", foreground: "000000", background: nord[split[1].hash.uint mod nord.len.uint])
     contents = contents.sortedByIt it.name
     createStatus()
   else:
